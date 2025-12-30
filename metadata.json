@@ -1,0 +1,7 @@
+{
+  "name": "Sentinel VMS",
+  "description": "AI-Powered Visitor Management System with role-based access, real-time security monitoring, and automated approvals.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
