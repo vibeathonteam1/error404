@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Shield, Briefcase, Lock, UserCheck, ArrowRight, Car, MapPin } from 'lucide-react';
+import { Shield, Lock, UserCheck, ShieldCheck, Zap, Briefcase, Car, MapPin } from 'lucide-react';
 import { UserRole, AccessStatus, DestinationType } from '../types';
 import { LOCATIONS } from '../constants';
 
@@ -27,20 +27,16 @@ const Login: React.FC = () => {
     e.preventDefault();
     setLoading(true);
 
-    const selectedLoc = LOCATIONS.find(l => l.name === formData.destination);
-
     // Simulate API Auth
     setTimeout(() => {
       setLoading(false);
-      
       if (isAdmin) {
         navigate('/admin');
       } else {
-        // Staff Check-in Success
-        // Mocking a staff name lookup based on ID
+        const selectedLoc = LOCATIONS.find(l => l.name === formData.destination);
         navigate('/badge', { 
           state: { 
-            name: 'Internal Staff Member', // In real app, fetched from backend
+            name: 'Internal Staff Member',
             identifier: formData.staffId,
             plateNumber: formData.plateNumber,
             role: UserRole.STAFF,
@@ -52,120 +48,119 @@ const Login: React.FC = () => {
           } 
         });
       }
-    }, 1000);
+    }, 1200);
   };
 
   return (
-    <div className="max-w-md mx-auto px-4 py-12">
-      <div className="text-center mb-8">
-        <div className={`w-16 h-16 mx-auto rounded-xl flex items-center justify-center mb-4 ${isAdmin ? 'bg-indigo-100 text-indigo-600' : 'bg-emerald-100 text-emerald-600'}`}>
-          {isAdmin ? <Shield size={32} /> : <Briefcase size={32} />}
-        </div>
-        <h2 className="text-3xl font-bold text-slate-900">
-          {isAdmin ? 'Security Login' : 'Staff Check-In'}
-        </h2>
-        <p className="text-slate-500 mt-2">
-          {isAdmin 
-            ? 'Restricted access for security personnel only.' 
-            : 'Enter your credentials to log your attendance.'}
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Staff ID</label>
-          <div className="relative">
-            <UserCheck className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-              type="text" 
-              name="staffId"
-              required
-              value={formData.staffId}
-              onChange={handleInputChange}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-              placeholder="e.g. S-1024"
-            />
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 font-sans">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-12">
+          <div className={`w-24 h-24 mx-auto rounded-[2.5rem] flex items-center justify-center mb-8 shadow-2xl ${isAdmin ? 'bg-slate-900 text-indigo-400' : 'bg-indigo-600 text-white'}`}>
+            {isAdmin ? <Shield size={44} /> : <ShieldCheck size={44} />}
           </div>
+          <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+            {isAdmin ? 'Operator Link' : 'Secure Entry'}
+          </h2>
+          <p className="text-slate-400 mt-4 font-bold text-xs uppercase tracking-[0.2em] px-12 leading-relaxed">
+            {isAdmin 
+              ? 'Authorized Security Personnel (Polis Bantuan) Identity Gateway.' 
+              : 'Internal verification portal for registered staff members.'}
+          </p>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-              type="password" 
-              name="password"
-              required
-              value={formData.password}
-              onChange={handleInputChange}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-              placeholder="••••••••"
-            />
-          </div>
-        </div>
-
-        {/* Location Selection for Staff */}
-        {!isAdmin && (
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Work Location</label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <select 
-                name="destination"
-                required
-                value={formData.destination}
-                onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none bg-white appearance-none"
-              >
-                <option value="">Select location...</option>
-                {LOCATIONS.map(loc => (
-                  <option key={loc.name} value={loc.name}>
-                    {loc.name}
-                  </option>
-                ))}
-              </select>
+        <div className="bg-white p-12 rounded-[3.5rem] shadow-2xl border border-slate-200 relative overflow-hidden">
+          {isAdmin && (
+            <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
+          )}
+          
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Identification Number</label>
+              <div className="relative">
+                <UserCheck className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+                <input 
+                  type="text" 
+                  name="staffId"
+                  required
+                  value={formData.staffId}
+                  onChange={handleInputChange}
+                  className="w-full pl-14 pr-6 py-5 bg-slate-50 border border-slate-100 rounded-2xl font-black text-slate-700 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300"
+                  placeholder="e.g. PB-1002"
+                />
+              </div>
             </div>
-          </div>
-        )}
 
-        {/* Plate Number is only required for Staff (if driving), not Admin */}
-        {!isAdmin && (
-          <div>
-             <div className="flex justify-between items-center mb-1">
-                <label className="block text-sm font-medium text-slate-700">Vehicle Plate</label>
-                <span className="text-xs text-slate-400">Optional (if driving)</span>
-             </div>
-            <div className="relative">
-              <Car className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input 
-                type="text" 
-                name="plateNumber"
-                value={formData.plateNumber}
-                onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none uppercase placeholder:normal-case"
-                placeholder="WAA 1234"
-              />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Access PIN / Password</label>
+              <div className="relative">
+                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+                <input 
+                  type="password" 
+                  name="password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full pl-14 pr-6 py-5 bg-slate-50 border border-slate-100 rounded-2xl font-black text-slate-700 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-slate-300"
+                  placeholder="••••••••"
+                />
+              </div>
             </div>
-          </div>
-        )}
 
-        <button 
-          type="submit"
-          disabled={loading}
-          className={`w-full py-3 rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2
-            ${loading ? 'opacity-70 cursor-not-allowed' : ''}
-            ${isAdmin ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200' : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200'}
-          `}
-        >
-          {loading ? 'Authenticating...' : (isAdmin ? 'Access Dashboard' : 'Check In')}
-          {!loading && <ArrowRight size={18} />}
-        </button>
-      </form>
+            {!isAdmin && (
+              <div className="space-y-6 pt-4 animate-in fade-in duration-500">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Duty Location</label>
+                  <div className="relative">
+                    <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+                    <select 
+                      name="destination"
+                      required
+                      value={formData.destination}
+                      onChange={handleInputChange}
+                      className="w-full pl-14 pr-6 py-5 bg-slate-50 border border-slate-100 rounded-2xl font-black text-slate-700 outline-none appearance-none cursor-pointer focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                    >
+                      <option value="">Select a zone...</option>
+                      {LOCATIONS.map(loc => (
+                        <option key={loc.name} value={loc.name}>{loc.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-      <div className="mt-6 text-center">
-        <button onClick={() => navigate('/')} className="text-sm text-slate-500 hover:text-slate-800">
-          Cancel and return to home
-        </button>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Vehicle Plate (Optional)</label>
+                  <div className="relative">
+                    <Car className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+                    <input 
+                      type="text" 
+                      name="plateNumber"
+                      value={formData.plateNumber}
+                      onChange={handleInputChange}
+                      className="w-full pl-14 pr-6 py-5 bg-slate-50 border border-slate-100 rounded-2xl font-black text-slate-700 uppercase outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-300"
+                      placeholder="e.g. WAA 1234"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <button 
+              type="submit"
+              disabled={loading}
+              className={`w-full py-6 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.3em] text-white shadow-2xl transition-all flex items-center justify-center gap-4 active:scale-95
+                ${loading ? 'opacity-70 cursor-not-allowed' : ''}
+                ${isAdmin ? 'bg-slate-900 hover:bg-slate-800 shadow-slate-200' : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-100'}`}
+            >
+              {loading ? <Zap className="animate-spin" size={20} /> : (isAdmin ? 'Initiate Session' : 'Confirm Check-In')}
+            </button>
+          </form>
+        </div>
+        
+        <div className="mt-12 text-center">
+           <button onClick={() => navigate('/')} className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-all">
+             Back to Main Console
+           </button>
+        </div>
       </div>
     </div>
   );
